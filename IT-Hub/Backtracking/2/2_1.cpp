@@ -7,10 +7,12 @@ using namespace std;
 
 void dfs(unordered_set<int> &numsRemaining, vector<int> &current,
          vector<vector<int>> &result) {
-  if (numsRemaining.size() == 0)
+  if (numsRemaining.size() == 0) {
     result.push_back(current);
+    return;
+  }
   // choices for the loop to avoid problems with insert and erase operations
-  auto choices = numsRemaining; // tradeoff -> more memory usage
+  auto choices = numsRemaining; // tradeoff -> more memory usage + copies time
   for (const int x : choices) {
     current.push_back(x);
     numsRemaining.erase(x);
@@ -34,7 +36,7 @@ vector<vector<int>> permute(vector<int> &nums) {
 
 int main() {
   printTitle("Permutations");
-  vector<int> nums = {1, 2, 3};
+  vector<int> nums = {1, 2, 3, 4, 5, 6};
   vector<vector<int>> solution = timedCall(permute, nums);
   cout << "Solution: ";
   printVector(solution);
