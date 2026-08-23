@@ -5,25 +5,21 @@
 using namespace std;
 
 // optimal solution, no more copies, no insert or erase operations, just swap
-void dfs(vector<int> &nums, vector<int> &current, vector<vector<int>> &result,
-         const int start) {
+void dfs(vector<int> &nums, vector<vector<int>> &result, const int start) {
   if (start == nums.size()) {
-    result.push_back(current);
+    result.push_back(nums);
     return;
   }
   for (int i = start; i < nums.size(); i++) {
-    current.push_back(nums[i]);
     swap(nums[start], nums[i]);
-    dfs(nums, current, result, start + 1);
+    dfs(nums, result, start + 1);
     swap(nums[start], nums[i]);
-    current.pop_back();
   }
 }
 
 vector<vector<int>> permute(vector<int> &nums) {
   vector<vector<int>> result;
-  vector<int> current;
-  dfs(nums, current, result, 0);
+  dfs(nums, result, 0);
   return result;
 }
 
