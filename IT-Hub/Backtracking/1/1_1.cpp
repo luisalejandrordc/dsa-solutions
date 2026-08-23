@@ -18,6 +18,19 @@ vector<vector<int>> subsets(vector<int> &nums) {
   return result;
 }
 
+// same algorithm, just replace counter with originalSize
+vector<vector<int>> subsets1(vector<int> &nums) {
+  vector<vector<int>> result = {{}};
+  for (const int &x : nums) {
+    int originalSize = result.size();
+    for (int i = 0; i < originalSize; i++) {
+      result.push_back(result[i]);
+      result.back().push_back(x);
+    }
+  }
+  return result;
+}
+
 int main() {
   printTitle("Subsets");
   vector<int> nums = {1, 2, 3};
