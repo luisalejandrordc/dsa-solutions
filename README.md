@@ -12,4 +12,4 @@ This directory contains solutions to 50 DSA questions shared by the IT Hub Faceb
 
 ### Other LeetCode Solutions
 
-For a miscellaneous collection of LeetCode problems, organized by difficulty and problem number, check out [my LeetCode solutions](https://github.com/luisalejandrordc/leetcode). Solutions in that repository are written in multiple programming languages, including Python, JavaScript/TypeScript, and, of course, C++.
+For a miscellaneous collection of LeetCode problems, organized by difficulty and problem number, check out [my LeetCode solutions](https://github.com/luisalejandrordc/leetcode-solutions). Solutions in that repository are written in multiple programming languages, including Python, JavaScript/TypeScript, and, of course, C++.
