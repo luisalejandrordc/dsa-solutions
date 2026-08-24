@@ -25,13 +25,13 @@ void dfs(vector<vector<string>> &result, vector<int> &columns,
     // verify if the cell is available for placing the queen
     if (!leftDiag[row + col] && !rightDiag[row - col + n - 1]) {
       // place the queen
-      swap(columns[row], columns[col]);
+      swap(columns[row], columns[i]);
       leftDiag[row + col] = true;
       rightDiag[row - col + n - 1] = true;
       // move to the next row
       dfs(result, columns, leftDiag, rightDiag, n, row + 1);
       // backtracking
-      swap(columns[row], columns[col]);
+      swap(columns[row], columns[i]);
       leftDiag[row + col] = false;
       rightDiag[row - col + n - 1] = false;
     }
