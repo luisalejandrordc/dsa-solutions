@@ -25,6 +25,7 @@ inline TreeNode *arrayToBinaryTree(std::vector<int> &nums) {
     children.push(curr->left);
     curr->right = new TreeNode(nums[i + 1]);
     children.push(curr->right);
+    children.pop();
   }
   return root;
 }
