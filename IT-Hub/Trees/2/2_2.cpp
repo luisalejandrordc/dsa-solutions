@@ -13,6 +13,14 @@ vector<vector<int>> levelOrder(TreeNode *root) {
   nodes.push({0, root});
   while (!nodes.empty()) {
     auto [level, node] = nodes.front();
+    if (node != nullptr) {
+      if (result.size() == level)
+        result.push_back({});
+      result[level].push_back(node->val);
+      nodes.push({level + 1, node->left});
+      nodes.push({level + 1, node->right});
+    }
+    nodes.pop();
   }
   return result;
 }
