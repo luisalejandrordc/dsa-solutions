@@ -11,10 +11,13 @@ void recs(TreeNode *root, vector<vector<int>> &result, int layer) {
     return;
   if (layer == result.size())
     result.push_back({});
+  result[layer].push_back(root->val);
+  recs(root->left, result, layer + 1);
+  recs(root->right, result, layer + 1);
 }
 
 vector<vector<int>> levelOrder(TreeNode *root) {
-  // layer -> current node layer
+  // layer -> current node layer/level
   vector<vector<int>> result;
   recs(root, result, 0);
   return result;
@@ -22,15 +25,10 @@ vector<vector<int>> levelOrder(TreeNode *root) {
 
 int main() {
   printTitle("Binary Tree Level Order Traversal");
-  vector<optional<int>> nums = {3,  9,           20, std::nullopt, std::nullopt,
-                                15, std::nullopt};
+  vector<optional<int>> nums = {3, 9, 20, std::nullopt, std::nullopt, 15, 7};
   TreeNode *root = arrayToBinaryTree(nums);
   vector<vector<int>> solution = timedCall(levelOrder, root);
   cout << "Solution: ";
   printVector(solution);
-  TreeNode *my_root = arrayToBinaryTree(nums);
-  printBinaryTree(my_root);
-  auto vec = binaryTreeToArray(my_root);
-  printVector(vec);
   return 0;
 }
