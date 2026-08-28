@@ -44,10 +44,12 @@ inline TreeNode *arrayToBinaryTree(const std::vector<std::optional<T>> &nums) {
 }
 
 inline std::vector<std::optional<int>> binaryTreeToArray(TreeNode *root) {
+  if (root == nullptr)
+    return {};
   std::vector<std::optional<int>> result;
   std::queue<TreeNode *> children;
   children.push(root);
-  int realNodes = root == nullptr ? 0 : 1;
+  int realNodes = 1;
   while (realNodes > 0) {
     TreeNode *curr = children.front();
     if (curr == nullptr) {
@@ -66,15 +68,27 @@ inline std::vector<std::optional<int>> binaryTreeToArray(TreeNode *root) {
     }
     children.pop();
   }
+  int nodesLeft = result.size();
+  int levelSize = 1;
+  while (nodesLeft > 0) {
+    nodesLeft -= levelSize;
+    levelSize *= 2;
+  }
+  for (; nodesLeft < 0; nodesLeft++)
+    result.push_back(std::nullopt);
   return result;
 }
 
 inline void printBinaryTree(TreeNode *root) {
+  if (root == nullptr) {
+    std::cout << "[]" << std::endl;
+    return;
+  }
   std::queue<std::pair<int, TreeNode *>> children; // {layer, node}
   std::pair<int, int> state = {0, 0}; // {layer, nodes printed in layer}
   children.push({0, root});
-  int realNodes = root == nullptr ? 0 : 1;
-  std::cout << "{";
+  int realNodes = 1;
+  std::cout << "[";
   while (realNodes > 0) {
     std::pair<int, TreeNode *> curr = children.front();
     if (curr.second != root)
@@ -105,5 +119,5 @@ inline void printBinaryTree(TreeNode *root) {
     std::cout << ", null";
     state.second++;
   }
-  std::cout << "}" << std::endl;
+  std::cout << "]" << std::endl;
 }
