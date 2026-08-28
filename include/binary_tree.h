@@ -1,7 +1,9 @@
 #pragma once
 #include <iostream>
+#include <optional>
 #include <ostream>
 #include <queue>
+#include <type_traits>
 #include <vector>
 
 struct TreeNode {
@@ -13,7 +15,15 @@ struct TreeNode {
   TreeNode(int x, TreeNode *l, TreeNode *r) : val(0), left(l), right(r) {}
 };
 
-inline TreeNode *arrayToBinaryTree(std::vector<int> &nums) {
+template <typename T> struct is_optional : std::false_type {};
+
+template <typename T> struct is_optional<std::optional<T>> : std::true_type {};
+
+template <typename T>
+inline constexpr bool is_optional_v = is_optional<T>::value;
+
+template <typename T>
+inline TreeNode *arrayToBinaryTree(const std::vector<T> &nums) {
   if (nums.empty())
     return nullptr;
   TreeNode *root = new TreeNode(nums[0]);
@@ -21,10 +31,22 @@ inline TreeNode *arrayToBinaryTree(std::vector<int> &nums) {
   children.push(root);
   for (int i = 1; i + 1 < nums.size(); i += 2) {
     TreeNode *curr = children.front();
-    curr->left = new TreeNode(nums[i]);
-    children.push(curr->left);
-    curr->right = new TreeNode(nums[i + 1]);
-    children.push(curr->right);
+    if (curr == nullptr) {
+      children.push(nullptr); // left child
+      children.push(nullptr); // right child
+    } else {
+      if constexpr (is_optional_v<T>) {
+        if (nums[i].has_value())
+          curr->left = new TreeNode(*nums[i]);
+        if (nums[i + 1].has_value())
+          curr->right = new TreeNode(*nums[i + 1]);
+      } else {
+        curr->left = new TreeNode(nums[i]);
+        curr->right = new TreeNode(nums[i + 1]);
+      }
+      children.push(curr->left);
+      children.push(curr->right);
+    }
     children.pop();
   }
   return root;
