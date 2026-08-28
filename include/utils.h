@@ -2,8 +2,10 @@
 #include <chrono>
 #include <cstddef>
 #include <cstdint>
+#include <filesystem>
 #include <functional>
 #include <iostream>
+#include <optional>
 #include <string>
 #include <type_traits>
 #include <unordered_map>
@@ -17,11 +19,16 @@ inline void printTitle(const std::string &title) {
   std::cout << border << std::endl;
 }
 
-template <typename T> struct is_vector : std::false_type {};
+// std::optional<T> condition
+template <typename T> struct is_optional : std::false_type {};
+template <typename T> struct is_optional<std::optional<T>> : std::true_type {};
+template <typename T>
+inline constexpr bool is_optional_v = is_optional<T>::value;
 
+// std::vector<T> condition
+template <typename T> struct is_vector : std::false_type {};
 template <typename T, typename Allocator>
 struct is_vector<std::vector<T, Allocator>> : std::true_type {};
-
 template <typename T> inline constexpr bool is_vector_v = is_vector<T>::value;
 
 template <typename T>
@@ -33,8 +40,15 @@ inline void printVector(const std::vector<T> &vec,
       std::cout << ", ";
     if constexpr (is_vector_v<T>)
       printVector(vec[i], false);
-    else
-      std::cout << vec[i];
+    else {
+      if constexpr (is_optional_v<T>) {
+        if (vec[i].has_value())
+          std::cout << *vec[i];
+        else
+          std::cout << "null";
+      } else
+        std::cout << vec[i];
+    }
   }
   std::cout << "]";
   if (is_initial_call)

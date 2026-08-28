@@ -22,7 +22,8 @@ vector<vector<int>> levelOrder(TreeNode *root) {
 
 int main() {
   printTitle("Binary Tree Level Order Traversal");
-  vector<optional<int>> nums = {3, 9, 20, std::nullopt, std::nullopt, 15, 7};
+  vector<optional<int>> nums = {3,  9,           20, std::nullopt, std::nullopt,
+                                15, std::nullopt};
   TreeNode *root = arrayToBinaryTree(nums);
   vector<vector<int>> solution = timedCall(levelOrder, root);
   cout << "Solution: ";

@@ -85,7 +85,7 @@ inline std::vector<std::optional<int>> binaryTreeToArray(TreeNode *root) {
 
 inline void printBinaryTree(TreeNode *root) {
   std::queue<std::pair<int, TreeNode *>> children; // {layer, node}
-  std::pair<int, int> state = {0, 0};              // {layer, nodes printed}
+  std::pair<int, int> state = {0, 0}; // {layer, nodes printed in layer}
   children.push({0, root});
   int realNodes = root == nullptr ? 0 : 1;
   std::cout << "{";
@@ -117,6 +117,7 @@ inline void printBinaryTree(TreeNode *root) {
   }
   while (state.second < pow(2, state.first)) {
     std::cout << ", null";
+    state.second++;
   }
   std::cout << "}" << std::endl;
 }
