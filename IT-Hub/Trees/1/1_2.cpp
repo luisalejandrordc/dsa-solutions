@@ -1,6 +1,7 @@
 #include "../../../include/binary_tree.h"
 #include "../../../include/utils.h"
 #include <iostream>
+#include <optional>
 #include <queue>
 #include <vector>
 
@@ -24,7 +25,7 @@ TreeNode *invertTree(TreeNode *root) {
 
 int main() {
   printTitle("Invert Binary Tree");
-  vector<int> nums = {4, 2, 7, 1, 3, 6, 9};
+  vector<optional<int>> nums = {4, 2, 7, 1, 3, 6, 9};
   TreeNode *root = arrayToBinaryTree(nums);
   TreeNode *solution = timedCall(invertTree, root);
   cout << "Solution: ";
