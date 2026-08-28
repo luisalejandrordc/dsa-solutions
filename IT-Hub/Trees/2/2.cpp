@@ -29,5 +29,6 @@ int main() {
   printVector(solution);
   TreeNode *my_root = arrayToBinaryTree(nums);
   printBinaryTree(my_root);
+  binaryTreeToArray(root);
   return 0;
 }

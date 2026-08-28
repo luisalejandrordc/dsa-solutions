@@ -1,9 +1,11 @@
 #pragma once
+#include <cmath>
 #include <iostream>
 #include <optional>
 #include <ostream>
 #include <queue>
 #include <type_traits>
+#include <utility>
 #include <vector>
 
 struct TreeNode {
@@ -56,30 +58,65 @@ inline TreeNode *arrayToBinaryTree(const std::vector<T> &nums) {
   return root;
 }
 
-inline void printBinaryTree(TreeNode *root) {
+inline std::vector<std::optional<int>> binaryTreeToArray(TreeNode *root) {
+  std::vector<std::optional<int>> result;
   std::queue<TreeNode *> children;
   children.push(root);
-  int noNullNodes = root == nullptr ? 0 : 1;
-  std::cout << "{";
-  while (noNullNodes > 0) {
+  int realNodes = root == nullptr ? 0 : 1;
+  while (realNodes > 0) {
     TreeNode *curr = children.front();
-    if (curr != root)
-      std::cout << ", ";
     if (curr == nullptr) {
-      std::cout << "null";
-      children.push(nullptr); // left child
-      children.push(nullptr); // right child
+      result.push_back(std::nullopt);
+      children.push(nullptr);
+      children.push(nullptr);
     } else {
-      noNullNodes--;
-      std::cout << curr->val;
+      realNodes--;
       children.push(curr->left);
       children.push(curr->right);
       if (curr->left != nullptr)
-        noNullNodes++;
+        realNodes++;
       if (curr->right != nullptr)
-        noNullNodes++;
+        realNodes++;
     }
     children.pop();
+  }
+  return result;
+}
+
+inline void printBinaryTree(TreeNode *root) {
+  std::queue<std::pair<int, TreeNode *>> children; // {layer, node}
+  std::pair<int, int> state = {0, 0};              // {layer, nodes printed}
+  children.push({0, root});
+  int realNodes = root == nullptr ? 0 : 1;
+  std::cout << "{";
+  while (realNodes > 0) {
+    std::pair<int, TreeNode *> curr = children.front();
+    if (curr.second != root)
+      std::cout << ", ";
+    if (curr.first > state.first) {
+      state.first = curr.first;
+      state.second = 0;
+    }
+    if (curr.first == state.first)
+      state.second++;
+    if (curr.second == nullptr) {
+      std::cout << "null";
+      children.push({curr.first + 1, nullptr}); // left child
+      children.push({curr.first + 1, nullptr}); // right child
+    } else {
+      realNodes--;
+      std::cout << curr.second->val;
+      children.push({curr.first + 1, curr.second->left});
+      children.push({curr.first + 1, curr.second->right});
+      if (curr.second->left != nullptr)
+        realNodes++;
+      if (curr.second->right != nullptr)
+        realNodes++;
+    }
+    children.pop();
+  }
+  while (state.second < pow(2, state.first)) {
+    std::cout << ", null";
   }
   std::cout << "}" << std::endl;
 }
