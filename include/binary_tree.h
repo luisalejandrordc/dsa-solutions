@@ -84,40 +84,37 @@ inline void printBinaryTree(TreeNode *root) {
     std::cout << "[]" << std::endl;
     return;
   }
-  std::queue<std::pair<int, TreeNode *>> children; // {layer, node}
-  std::pair<int, int> state = {0, 0}; // {layer, nodes printed in layer}
-  children.push({0, root});
-  int realNodes = 1;
+  std::queue<TreeNode *> children;
+  children.push(root);
+  int nodesPrinted = 0, realNodes = 1;
   std::cout << "[";
   while (realNodes > 0) {
-    std::pair<int, TreeNode *> curr = children.front();
-    if (curr.second != root)
+    TreeNode *curr = children.front();
+    if (curr != root)
       std::cout << ", ";
-    if (curr.first > state.first) {
-      state.first = curr.first;
-      state.second = 0;
-    }
-    if (curr.first == state.first)
-      state.second++;
-    if (curr.second == nullptr) {
+    if (curr == nullptr) {
       std::cout << "null";
-      children.push({curr.first + 1, nullptr}); // left child
-      children.push({curr.first + 1, nullptr}); // right child
+      children.push(nullptr); // left child
+      children.push(nullptr); // right child
     } else {
       realNodes--;
-      std::cout << curr.second->val;
-      children.push({curr.first + 1, curr.second->left});
-      children.push({curr.first + 1, curr.second->right});
-      if (curr.second->left != nullptr)
+      std::cout << curr->val;
+      children.push(curr->left);
+      children.push(curr->right);
+      if (curr->left != nullptr)
         realNodes++;
-      if (curr.second->right != nullptr)
+      if (curr->right != nullptr)
         realNodes++;
     }
+    nodesPrinted++;
     children.pop();
   }
-  while (state.second < pow(2, state.first)) {
-    std::cout << ", null";
-    state.second++;
+  int levelSize = 1;
+  while (nodesPrinted > 0) {
+    nodesPrinted -= levelSize;
+    levelSize *= 2;
   }
+  for (; nodesPrinted < 0; nodesPrinted++)
+    std::cout << ", null";
   std::cout << "]" << std::endl;
 }
