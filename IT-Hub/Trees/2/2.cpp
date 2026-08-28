@@ -30,6 +30,8 @@ int main() {
   printVector(solution);
   TreeNode *my_root = arrayToBinaryTree(nums);
   printBinaryTree(my_root);
-  binaryTreeToArray(root);
+  auto vec = binaryTreeToArray(my_root);
+  printVector(vec);
+
   return 0;
 }

@@ -1,4 +1,5 @@
 #pragma once
+#include "utils.h"
 #include <cmath>
 #include <iostream>
 #include <optional>
@@ -17,22 +18,11 @@ struct TreeNode {
   TreeNode(int x, TreeNode *l, TreeNode *r) : val(0), left(l), right(r) {}
 };
 
-template <typename T> struct is_optional : std::false_type {};
-
-template <typename T> struct is_optional<std::optional<T>> : std::true_type {};
-
 template <typename T>
-inline constexpr bool is_optional_v = is_optional<T>::value;
-
-template <typename T>
-inline TreeNode *arrayToBinaryTree(const std::vector<T> &nums) {
-  if (nums.empty() || (is_optional_v<T> && !nums[0].has_value()))
+inline TreeNode *arrayToBinaryTree(const std::vector<std::optional<T>> &nums) {
+  if (nums.empty() || (!nums[0].has_value()))
     return nullptr;
-  TreeNode *root;
-  if constexpr (is_optional_v<T>)
-    root = new TreeNode(*nums[0]);
-  else
-    root = new TreeNode(nums[0]);
+  TreeNode *root = new TreeNode(*nums[0]);
   std::queue<TreeNode *> children;
   children.push(root);
   for (int i = 1; i + 1 < nums.size(); i += 2) {
@@ -41,15 +31,10 @@ inline TreeNode *arrayToBinaryTree(const std::vector<T> &nums) {
       children.push(nullptr); // left child
       children.push(nullptr); // right child
     } else {
-      if constexpr (is_optional_v<T>) {
-        if (nums[i].has_value())
-          curr->left = new TreeNode(*nums[i]);
-        if (nums[i + 1].has_value())
-          curr->right = new TreeNode(*nums[i + 1]);
-      } else {
-        curr->left = new TreeNode(nums[i]);
-        curr->right = new TreeNode(nums[i + 1]);
-      }
+      if (nums[i].has_value())
+        curr->left = new TreeNode(*nums[i]);
+      if (nums[i + 1].has_value())
+        curr->right = new TreeNode(*nums[i + 1]);
       children.push(curr->left);
       children.push(curr->right);
     }
@@ -71,6 +56,7 @@ inline std::vector<std::optional<int>> binaryTreeToArray(TreeNode *root) {
       children.push(nullptr);
     } else {
       realNodes--;
+      result.push_back(curr->val);
       children.push(curr->left);
       children.push(curr->right);
       if (curr->left != nullptr)
