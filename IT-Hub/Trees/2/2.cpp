@@ -27,5 +27,7 @@ int main() {
   vector<vector<int>> solution = timedCall(levelOrder, root);
   cout << "Solution: ";
   printVector(solution);
+  TreeNode *my_root = arrayToBinaryTree(nums);
+  printBinaryTree(my_root);
   return 0;
 }

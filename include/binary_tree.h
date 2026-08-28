@@ -24,9 +24,13 @@ inline constexpr bool is_optional_v = is_optional<T>::value;
 
 template <typename T>
 inline TreeNode *arrayToBinaryTree(const std::vector<T> &nums) {
-  if (nums.empty())
+  if (nums.empty() || (is_optional_v<T> && !nums[0].has_value()))
     return nullptr;
-  TreeNode *root = new TreeNode(nums[0]);
+  TreeNode *root;
+  if constexpr (is_optional_v<T>)
+    root = new TreeNode(*nums[0]);
+  else
+    root = new TreeNode(nums[0]);
   std::queue<TreeNode *> children;
   children.push(root);
   for (int i = 1; i + 1 < nums.size(); i += 2) {
@@ -55,16 +59,26 @@ inline TreeNode *arrayToBinaryTree(const std::vector<T> &nums) {
 inline void printBinaryTree(TreeNode *root) {
   std::queue<TreeNode *> children;
   children.push(root);
+  int noNullNodes = root == nullptr ? 0 : 1;
   std::cout << "{";
-  while (!children.empty()) {
+  while (noNullNodes > 0) {
     TreeNode *curr = children.front();
     if (curr != root)
       std::cout << ", ";
-    std::cout << curr->val;
-    if (curr->left != nullptr)
+    if (curr == nullptr) {
+      std::cout << "null";
+      children.push(nullptr); // left child
+      children.push(nullptr); // right child
+    } else {
+      noNullNodes--;
+      std::cout << curr->val;
       children.push(curr->left);
-    if (curr->right != nullptr)
       children.push(curr->right);
+      if (curr->left != nullptr)
+        noNullNodes++;
+      if (curr->right != nullptr)
+        noNullNodes++;
+    }
     children.pop();
   }
   std::cout << "}" << std::endl;
