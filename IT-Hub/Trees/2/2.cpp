@@ -32,6 +32,5 @@ int main() {
   printBinaryTree(my_root);
   auto vec = binaryTreeToArray(my_root);
   printVector(vec);
-
   return 0;
 }

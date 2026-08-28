@@ -20,14 +20,24 @@ inline ListNode *arrayToLinkedList(const std::vector<int> &nums) {
   return head->next;
 }
 
+inline std::vector<int> linkedListToArray(ListNode *head) {
+  std::vector<int> nums;
+  ListNode *curr = head;
+  while (curr != nullptr) {
+    nums.push_back(curr->val);
+    curr = curr->next;
+  }
+  return nums;
+}
+
 inline void printLinkedList(ListNode *head) {
   ListNode *curr = head;
-  std::cout << "{";
+  std::cout << "[";
   while (curr != nullptr) {
     if (curr != head)
       std::cout << ", ";
     std::cout << curr->val;
     curr = curr->next;
   }
-  std::cout << "}" << std::endl;
+  std::cout << "]" << std::endl;
 }
