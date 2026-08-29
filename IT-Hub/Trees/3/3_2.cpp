@@ -6,31 +6,44 @@
 #include <ostream>
 #include <vector>
 
-// DFS: Find all the ancestors of given node target
-bool recs(TreeNode *root, TreeNode *target,
-          std::vector<TreeNode *> &ancestors) {
-  // base case
-  if (root == nullptr || target == nullptr)
+// DFS: Find all the ancestors of p and q
+bool recs(TreeNode *root, TreeNode *p, TreeNode *q,
+          std::vector<TreeNode *> &p_ancestors,
+          std::vector<TreeNode *> &q_ancestors, bool &p_found, bool &q_found) {
+  if (root == nullptr || p == nullptr || q == nullptr)
     return false;
 
-  ancestors.push_back(root);
+  if (!p_found) {
+    p_ancestors.push_back(root);
+    if (p == root)
+      p_found = true;
+  }
+  if (!q_found) {
+    q_ancestors.push_back(root);
+    if (q == root)
+      q_found = true;
+  }
 
-  if (root == target)
+  if (p_found && q_found)
     return true;
 
-  if (recs(root->left, target, ancestors) ||
-      recs(root->right, target, ancestors))
+  if (recs(root->left, p, q, p_ancestors, q_ancestors, p_found, q_found))
+    return true;
+  if (recs(root->right, p, q, p_ancestors, q_ancestors, p_found, q_found))
     return true;
 
-  ancestors.pop_back();
-
+  if (!p_found)
+    p_ancestors.pop_back();
+  if (!q_found)
+    q_ancestors.pop_back();
   return false;
 }
 
 TreeNode *lowestCommonAncestor(TreeNode *root, TreeNode *p, TreeNode *q) {
   // Find all ancestors of p and q
   std::vector<TreeNode *> p_ancestors, q_ancestors;
-  if (!recs(root, p, p_ancestors) || !recs(root, q, q_ancestors))
+  bool p_found = false, q_found = false;
+  if (!recs(root, p, q, p_ancestors, q_ancestors, p_found, q_found))
     return nullptr; // p or q not found in tree
 
   // Return Lowest Common Ancestor
