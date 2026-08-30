@@ -21,7 +21,7 @@ bool recs(TreeNode *nodeLeft, TreeNode *nodeRight) {
 
 bool isSymmetric(TreeNode *root) {
   if (root == nullptr)
-    return false;
+    return true; // depends if you consider an empty tree symmetric or not
   return recs(root->left, root->right);
 }
 
