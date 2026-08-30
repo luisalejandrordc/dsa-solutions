@@ -2,7 +2,6 @@
 #include "../../../include/utils.h"
 #include <cmath>
 #include <iostream>
-#include <iterator>
 #include <optional>
 #include <queue>
 #include <utility>
@@ -52,6 +51,7 @@ bool isSymmetric(TreeNode *root) {
     }
     nodes.pop();
   }
+  // complete levelNodes with nullopt until filling the required size
   for (int i = levelNodes.size(); i < pow(2, currLevel); i++)
     levelNodes.push_back(nullopt);
   return verifySymmetry(levelNodes, currLevel);
