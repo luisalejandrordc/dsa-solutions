@@ -1,9 +1,11 @@
 #include "../../../include/doubly_linked_list.h"
 #include "../../../include/utils.h"
 #include <iostream>
+#include <optional>
 #include <ostream>
 #include <unordered_map>
 #include <utility>
+#include <vector>
 
 class LRUCache {
   // cache -> {key, {node address, value}}
@@ -63,21 +65,31 @@ public:
     // key does not exist and cache is full
     cache.erase(head->val);
     cache[key] = {head, value};
+    head->val = key;
     get(key);
   }
 };
 
 int main() {
   printTitle("LRU Cache");
+  std::cout << "Solution: " << std::endl;
+
+  // testing
   LRUCache myCache = LRUCache(2);
-  myCache.put(1, 1);
-  myCache.put(2, 2);
-  std::cout << "Key: 1 \t Value: " << myCache.get(1) << std::endl;
-  myCache.put(3, 3);
-  std::cout << "Key: 2 \t Value: " << myCache.get(2) << std::endl;
-  myCache.put(4, 4);
-  std::cout << "Key: 1 \t Value: " << myCache.get(1) << std::endl;
-  std::cout << "Key: 3 \t Value: " << myCache.get(3) << std::endl;
-  std::cout << "Key: 4 \t Value: " << myCache.get(4) << std::endl;
+  std::vector<std::string> methods = {"put", "put", "get", "put", "get",
+                                      "put", "get", "get", "get"};
+  std::vector<std::vector<int>> parameters = {{1, 1}, {2, 2}, {1}, {3, 3}, {2},
+                                              {4, 4}, {1},    {3}, {4}};
+  std::vector<std::optional<int>> result;
+  for (int i = 0; i < methods.size(); i++) {
+    if (methods[i] == "put") {
+      myCache.put(parameters[i][0], parameters[i][1]);
+      result.push_back(std::nullopt);
+    } else {
+      result.push_back(myCache.get(parameters[i][0]));
+    }
+  }
+  printVector(result);
+
   return 0;
 }
