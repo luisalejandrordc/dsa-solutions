@@ -1,6 +1,8 @@
 #pragma once
-
+#include <algorithm>
+#include <iostream>
 #include <vector>
+
 struct DListNode {
   int val;
   DListNode *next;
@@ -20,4 +22,30 @@ inline DListNode *arrayToDLinkedList(const std::vector<int> &nums) {
   return dummy->next;
 }
 
-inline void printDLinkedList()
+inline std::vector<int> dLinkedListToArray(DListNode *start, bool goNext = 1) {
+  std::vector<int> nums;
+  DListNode *curr = start;
+  while (curr != nullptr) {
+    nums.push_back(curr->val);
+    if (goNext)
+      curr = curr->next;
+    else
+      curr = curr->prev;
+  }
+  return nums;
+}
+
+inline void printDLinkedList(DListNode *start, bool goNext = 1) {
+  DListNode *curr = start;
+  std::cout << "{";
+  while (curr != nullptr) {
+    if (curr != start)
+      std::cout << ", ";
+    std::cout << curr->val;
+    if (goNext)
+      curr = curr->next;
+    else
+      curr = curr->prev;
+  }
+  std::cout << "}" << std::endl;
+}
