@@ -4,12 +4,11 @@
 
 class ParkingSystem {
   // parkingSlots[i] = {#used, #total} for carType i+1
-  std::vector<std::pair<int, int>> parkingSlots;
+  std::array<std::pair<int, int>, 3> parkingSlots;
 
 public:
-  ParkingSystem(int b, int m, int s) {
-    parkingSlots = {{0, b}, {0, m}, {0, s}};
-  }
+  ParkingSystem(int b, int m, int s)
+      : parkingSlots({{{0, b}, {0, m}, {0, s}}}) {}
 
   bool addCar(int carType) {
     std::pair<int, int> &foo = parkingSlots[carType - 1];
