@@ -1,55 +1,88 @@
 #include "../../../include/utils.h"
-#include <ostream>
+#include <queue>
 #include <unordered_map>
 #include <unordered_set>
+#include <utility>
 #include <vector>
 
+struct Node {
+  int timestamp;
+  int tweetId;
+  int userId;
+  int index;
+  bool operator<(const Node &other) const {
+    return timestamp < other.timestamp;
+  }
+};
+
 class Twitter {
-  // tweets[i] -> {userId, tweetId} most recent on the back
-  std::vector<std::pair<int, int>> tweets;
+  // tweets[userId] -> {(timestamp, tweetId), ...} most recent on the back
+  std::unordered_map<int, std::vector<std::pair<int, int>>> tweets;
   // following[userId] -> set of users that userId follows
   std::unordered_map<int, std::unordered_set<int>> following;
+  // timestamp / counter
+  int timestamp = 0;
 
 public:
   void postTweet(int userId, int tweetId) {
-    tweets.push_back({userId, tweetId});
+    tweets[userId].push_back({timestamp, tweetId});
+    timestamp++;
   }
 
   void follow(int followerId, int followeeId) {
-    if (following.count(followerId) == 0)
-      following[followerId] = {};
-    // ignore if followeeId already exists
     following[followerId].insert(followeeId);
   }
 
   void unfollow(int followerId, int followeeId) {
-    if (following.count(followerId) == 1)
-      // ignore if followeeId does not exist
-      following[followerId].erase(followeeId);
+    if (auto it = following.find(followerId); it != following.end())
+      it->second.erase(followeeId);
+  }
+
+  Node *getBackNode(int userId) {
+    if (auto it = tweets.find(userId);
+        it != tweets.end() && !it->second.empty()) {
+      Node *node = new Node;
+      node->userId = userId;
+      node->index = it->second.size() - 1;
+      node->timestamp = it->second[node->index].first;
+      node->tweetId = it->second[node->index].second;
+      return node;
+    }
+    return nullptr;
   }
 
   std::vector<int> getNewsFeed(int userId) {
-    std::vector<int> newsFeed;
-    newsFeed.reserve(10);
-    for (int i = tweets.size() - 1, count = 0; i >= 0 && count < 10; i--) {
-      auto [poster, tweetId] = tweets[i];
-      if (poster == userId || (following.count(userId) == 1 &&
-                               following[userId].count(poster) == 1)) {
-        newsFeed.push_back(tweetId);
-        count++;
+    std::priority_queue<Node> pq;
+
+    // user's own tweets
+    if (Node *node = getBackNode(userId); node != nullptr)
+      pq.push(*node);
+
+    // Tweets from followed users
+    if (auto it = following.find(userId); it != following.end())
+      for (int followeeId : it->second)
+        if (Node *node = getBackNode(followeeId); node != nullptr)
+          pq.push(*node);
+
+    std::vector<int> feed;
+    feed.reserve(10);
+
+    while (!pq.empty() && feed.size() < 10) {
+      Node node = pq.top();
+      pq.pop();
+
+      feed.push_back(node.tweetId);
+
+      // move to this user's next-most-recent tweet
+      if (node.index > 0) {
+        node.index--;
+        node.timestamp = tweets[node.userId][node.index].first;
+        node.tweetId = tweets[node.userId][node.index].second;
+        pq.push(node);
       }
     }
-    return newsFeed;
-  }
 
-  void printTweets() {
-    std::cout << "{";
-    for (int i = 0; i < tweets.size(); i++) {
-      if (i != 0)
-        std::cout << ", ";
-      std::cout << tweets[i].first << ": " << tweets[i].second;
-    }
-    std::cout << "}";
+    return feed;
   }
 };
 

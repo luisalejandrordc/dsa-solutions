@@ -31,10 +31,11 @@ public:
   std::vector<int> getNewsFeed(int userId) {
     std::vector<int> newsFeed;
     newsFeed.reserve(10);
+    bool hasFollowers = following.count(userId);
     for (int i = tweets.size() - 1, count = 0; i >= 0 && count < 10; i--) {
       auto [poster, tweetId] = tweets[i];
-      if (poster == userId || (following.count(userId) == 1 &&
-                               following[userId].count(poster) == 1)) {
+      if (poster == userId ||
+          (hasFollowers && following[userId].count(poster))) {
         newsFeed.push_back(tweetId);
         count++;
       }
