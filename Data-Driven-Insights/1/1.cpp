@@ -1,5 +1,7 @@
+#include "../../include/utils.h"
 #include <iostream>
 #include <unordered_map>
+#include <utility>
 #include <vector>
 
 using namespace std;
@@ -19,8 +21,8 @@ public:
     unordered_map<int, int> map;
     for (int i = 0; i < nums.size(); i++) {
       int diff = target - nums[i];
-      if (map.count(diff))
-        return {map[diff], i};
+      if (auto it = map.find(diff); it != map.end())
+        return {it->second, i};
       map[nums[i]] = i;
     }
 
@@ -29,9 +31,14 @@ public:
 };
 
 int main() {
-  cout << "QUESTION 1" << endl;
+  printTitle("Two Sum");
   vector<int> nums = {2, 7, 11, 15};
   int target = 9;
+
+  Solution s;
+  auto sol = timedCall(&Solution::twoSum1, s, nums, target);
+  printVector(sol);
+
   vector<int> sol1 = Solution().twoSum1(nums, target);
   cout << "Solution 1: " << "[" << sol1[0] << ", " << sol1[1] << "]" << endl;
   vector<int> sol2 = Solution().twoSum2(nums, target);

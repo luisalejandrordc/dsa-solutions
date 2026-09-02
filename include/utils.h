@@ -25,6 +25,12 @@ template <typename T> struct is_optional<std::optional<T>> : std::true_type {};
 template <typename T>
 inline constexpr bool is_optional_v = is_optional<T>::value;
 
+// std::pair<T1, T2> condition
+template <typename T> struct is_pair : std::false_type {};
+template <typename T1, typename T2>
+struct is_pair<std::pair<T1, T2>> : std::true_type {};
+template <typename T> inline constexpr bool is_pair_v = is_pair<T>::value;
+
 // std::vector<T> condition
 template <typename T> struct is_vector : std::false_type {};
 template <typename T, typename Allocator>
@@ -33,26 +39,32 @@ template <typename T> inline constexpr bool is_vector_v = is_vector<T>::value;
 
 template <typename T>
 inline void printVector(const std::vector<T> &vec,
-                        const bool is_initial_call = true) {
+                        const bool addNewLine = true) {
   std::cout << "[";
   for (size_t i = 0; i < vec.size(); i++) {
     if (i > 0)
       std::cout << ", ";
     if constexpr (is_vector_v<T>)
       printVector(vec[i], false);
-    else {
-      if constexpr (is_optional_v<T>) {
-        if (vec[i].has_value())
-          std::cout << *vec[i];
-        else
-          std::cout << "null";
-      } else
-        std::cout << vec[i];
-    }
+    else if constexpr (is_pair_v<T>)
+      printPair(vec[i], false);
+    else if constexpr (is_optional_v<T>)
+      if (vec[i].has_value())
+        std::cout << *vec[i];
+      else
+        std::cout << "null";
+    else
+      std::cout << vec[i];
   }
   std::cout << "]";
-  if (is_initial_call)
+  if (addNewLine)
     std::cout << std::endl;
+}
+
+template <typename T1, typename T2>
+inline void printPair(const std::pair<T1, T2> &p,
+                      const bool addNewLine = true) {
+  printVector(std::vector{p.first, p.second}, addNewLine);
 }
 
 template <typename K, typename V>
